@@ -18,7 +18,7 @@ pub struct Document {
     #[serde(rename = "original_file")]
     pub original_file: String,
     #[serde(rename = "signed_file")]
-    pub signed_file: Value,
+    pub signed_file: Option<String>,
     #[serde(rename = "created_at")]
     pub created_at: String,
     #[serde(rename = "last_update_at")]

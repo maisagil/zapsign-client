@@ -1,3 +1,4 @@
+mod api;
 mod endpoints;
 
 pub use endpoints::*;
@@ -6,7 +7,9 @@ pub use rustify::{errors::ClientError, Client, Endpoint};
 #[cfg(test)]
 mod tests {
     use super::{Client, ClientError, Endpoint};
+    use crate::api::create_document::request;
     use crate::get_docs::{Docs, PaginationWrapper};
+
     const API_TOKEN: &str = std::env!("API_TOKEN");
     const BASE_URL: &str = std::env!("BASE_URL");
 

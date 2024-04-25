@@ -1620,6 +1620,7 @@ dependencies = [
  "rustify_derive",
  "serde",
  "serde_derive",
+ "serde_json",
  "tokio",
  "tracing",
  "wiremock",
