@@ -3,11 +3,11 @@ use rustify::Wrapper;
 use rustify_derive::Endpoint;
 use serde::de::DeserializeOwned;
 use serde_derive::{Deserialize, Serialize};
-use serde_json::Value;
 
 pub type DocsResponse = Vec<Document>;
 
-#[derive(Default, Debug, Clone, PartialEq, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(test, derive(Eq))]
 #[serde(rename_all = "camelCase")]
 pub struct Document {
     #[serde(rename = "open_id")]
@@ -18,7 +18,7 @@ pub struct Document {
     #[serde(rename = "original_file")]
     pub original_file: String,
     #[serde(rename = "signed_file")]
-    pub signed_file: Value,
+    pub signed_file: Option<String>,
     #[serde(rename = "created_at")]
     pub created_at: String,
     #[serde(rename = "last_update_at")]
@@ -35,7 +35,8 @@ pub struct Docs {
     page: i32,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Default, Debug, Deserialize, Serialize)]
+#[cfg_attr(test, derive(PartialEq))]
 pub struct PaginationWrapper<T> {
     pub count: i32,
     pub next: Option<String>,
