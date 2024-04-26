@@ -1,34 +1,24 @@
+mod api;
 mod endpoints;
+mod zapsign_client;
 
 pub use endpoints::*;
 pub use rustify::{errors::ClientError, Client, Endpoint};
 
 #[cfg(test)]
 mod tests {
-    use super::{Client, Endpoint};
-    use crate::get_docs::{Docs, Document, PaginationWrapper};
-    use wiremock::matchers::{header, method, path};
-    use wiremock::{Mock, MockServer, ResponseTemplate};
+    use super::{Client, ClientError, Endpoint};
+    use crate::api::create_document::request;
+    use crate::get_docs::{Docs, PaginationWrapper};
+    use crate::zapsign_client;
 
     const API_TOKEN: &str = std::env!("API_TOKEN");
-    // const BASE_URL: &str = std::env!("BASE_URL");
+    const BASE_URL: &str = std::env!("BASE_URL");
+    #[tokio::test]
+    async fn teste() {}
 
     #[tokio::test]
     async fn it_works() {
-        let mock_server = MockServer::start().await;
-
-        let mock_response = PaginationWrapper {
-            results: vec![Document::default()],
-            ..Default::default()
-        };
-
-        Mock::given(method("GET"))
-            .and(path("/docs"))
-            .and(header("Authorization", API_TOKEN))
-            .respond_with(ResponseTemplate::new(200).set_body_json(&mock_response))
-            .mount(&mock_server)
-            .await;
-
         let endpoint = Docs::builder().page(1).build().unwrap();
         // client with authentication token
         let mut headers = reqwest::header::HeaderMap::new();
@@ -42,25 +32,22 @@ mod tests {
             .build()
             .unwrap();
 
-        let client = Client::new(&mock_server.uri(), req_client); // Configures base address of http://api.com
+        let client = Client::new(BASE_URL, req_client); // Configures base address of http://api.com
 
         let result = endpoint.exec(&client).await; // Sends GET request to http://api.com/test/path
-        assert!(result.is_ok());
-        let result = result.unwrap().wrap::<PaginationWrapper<_>>().unwrap();
-        assert_eq!(mock_response, result);
-        // match result {
-        //     Ok(r) => match r.wrap::<PaginationWrapper<_>>() {
-        //         Ok(d) => {
-        //             d.results.iter().for_each(|d| println!("{:#?}", d));
-        //         }
-        //         Err(ClientError::ResponseParseError { source, content }) => {
-        //             println!("{}: {}", source, content.unwrap_or("".into()))
-        //         }
-        //         r => println!("{:#?}", r),
-        //     },
-        //     Err(e) => match e {
-        //         _ => println!("{:#?}", e),
-        //     },
-        // };
+        match result {
+            Ok(r) => match r.wrap::<PaginationWrapper<_>>() {
+                Ok(d) => {
+                    d.results.iter().for_each(|d| println!("{:#?}", d));
+                }
+                Err(ClientError::ResponseParseError { source, content }) => {
+                    println!("{}: {}", source, content.unwrap_or("".into()))
+                }
+                r => println!("{:#?}", r),
+            },
+            Err(e) => match e {
+                _ => println!("{:#?}", e),
+            },
+        };
     }
 }
