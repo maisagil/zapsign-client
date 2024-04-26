@@ -1,8 +1,15 @@
+use crate::api::create_document::response::Response;
 use derive_builder::Builder;
+use rustify::MiddleWare;
 use rustify_derive::Endpoint;
 
 #[derive(Builder, Endpoint)]
-#[endpoint(path = "docs/", method = "POST", builder = "true")]
+#[endpoint(
+    path = "docs/",
+    method = "POST",
+    builder = "true",
+    response = "Response"
+)]
 #[builder(setter(into))] // Improves the building process
 pub struct Request {
     #[endpoint(body)]
@@ -47,4 +54,21 @@ pub struct Request {
     allow_refuse_signature: bool,
     #[endpoint(body)]
     disable_signers_get_original_file: bool,
+}
+
+impl MiddleWare for Request {
+    fn request<E: rustify::Endpoint>(
+        &self,
+        endpoint: &E,
+        req: &mut http::Request<Vec<u8>>,
+    ) -> Result<(), rustify::errors::ClientError> {
+        Ok(())
+    }
+    fn response<E: rustify::Endpoint>(
+        &self,
+        endpoint: &E,
+        resp: &mut http::Response<Vec<u8>>,
+    ) -> Result<(), rustify::errors::ClientError> {
+        Ok(())
+    }
 }

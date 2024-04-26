@@ -1,5 +1,6 @@
 mod api;
 mod endpoints;
+mod zapsign_client;
 
 pub use endpoints::*;
 pub use rustify::{errors::ClientError, Client, Endpoint};
@@ -9,9 +10,12 @@ mod tests {
     use super::{Client, ClientError, Endpoint};
     use crate::api::create_document::request;
     use crate::get_docs::{Docs, PaginationWrapper};
+    use crate::zapsign_client;
 
     const API_TOKEN: &str = std::env!("API_TOKEN");
     const BASE_URL: &str = std::env!("BASE_URL");
+    #[tokio::test]
+    async fn teste() {}
 
     #[tokio::test]
     async fn it_works() {
