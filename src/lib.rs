@@ -7,15 +7,43 @@ pub use rustify::{errors::ClientError, Client, Endpoint};
 
 #[cfg(test)]
 mod tests {
+    use reqwest::RequestBuilder;
+
     use super::{Client, ClientError, Endpoint};
-    use crate::api::create_document::request;
+    use crate::api::create_document::request::{Signer, SignerBuilder};
+    use crate::api::create_document::{self, request};
     use crate::get_docs::{Docs, PaginationWrapper};
-    use crate::zapsign_client;
+    use crate::zapsign_client::{self, ZapsignProvider};
 
     const API_TOKEN: &str = std::env!("API_TOKEN");
     const BASE_URL: &str = std::env!("BASE_URL");
     #[tokio::test]
-    async fn teste() {}
+    async fn teste() {
+        let provider = ZapsignProvider::new(API_TOKEN);
+
+        let mut req_builder = create_document::request::RequestBuilder::default();
+
+        let mut signer_vec: Vec<Signer> = vec![];
+
+        signer_vec.push(
+            SignerBuilder::default()
+                .name("My First API Signer PDF".to_string())
+                .build()
+                .unwrap(),
+        );
+
+        let req = req_builder
+            .name("TesteDoc")
+            .url_pdf("https://www.zero2prod.com/assets/sample_zero2prod.pdf".to_string())
+            .lang("pt-br")
+            .disable_signer_emails(true)
+            .signed_file_only_finished(true)
+            .external_id(None)
+            .signers(signer_vec);
+
+        let res = provider.create_document(req).await;
+        let _ = dbg!(res);
+    }
 
     #[tokio::test]
     async fn it_works() {
