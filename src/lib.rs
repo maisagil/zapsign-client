@@ -42,7 +42,9 @@ mod tests {
             .signers(signer_vec);
 
         let res = provider.create_document(req).await;
-        let _ = dbg!(res);
+        let _ = dbg!(&res);
+
+        assert!(res.is_ok());
     }
 
     #[tokio::test]

@@ -1,4 +1,4 @@
-use crate::api::create_document::response::Response;
+use super::response::Response;
 use derive_builder::Builder;
 use rustify_derive::Endpoint;
 use serde::{Deserialize, Serialize};
