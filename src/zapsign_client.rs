@@ -62,9 +62,8 @@ impl MiddleWare for ZapsignMiddleware {
         _: &E,
         req: &mut http::request::Request<Vec<u8>>,
     ) -> Result<(), rustify::errors::ClientError> {
-        let auth_as_header = HeaderValue::from_str(&format!("{} {}", "Bearer", self.auth));
-        req.headers_mut()
-            .append(AUTHORIZATION, auth_as_header.unwrap());
+        let auth_as_header: HeaderValue = format!("{} {}", "Bearer", self.auth).parse().unwrap();
+        req.headers_mut().append(AUTHORIZATION, auth_as_header);
 
         let ctype_as_header = HeaderValue::from_str("application/json");
 
