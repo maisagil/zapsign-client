@@ -3,17 +3,14 @@ mod endpoints;
 mod zapsign_client;
 
 pub use endpoints::*;
-pub use rustify::{errors::ClientError, Client, Endpoint};
 
 #[cfg(test)]
 mod tests {
-    use reqwest::RequestBuilder;
-
-    use super::{Client, ClientError, Endpoint};
     use crate::api::create_document::request::{Signer, SignerBuilder};
-    use crate::api::create_document::{self, request};
+    use crate::api::create_document::{self};
     use crate::get_docs::{Docs, PaginationWrapper};
-    use crate::zapsign_client::{self, ZapsignProvider};
+    use crate::zapsign_client::ZapsignProvider;
+    use rustify::{errors::ClientError, Client, Endpoint};
 
     const API_TOKEN: &str = std::env!("API_TOKEN");
     const BASE_URL: &str = std::env!("BASE_URL");
