@@ -8,7 +8,10 @@ pub use endpoints::*;
 mod tests {
     use crate::api::create_document::request::{Signer, SignerBuilder};
     use crate::api::create_document::{self};
-    use crate::get_docs::{Docs, PaginationWrapper};
+    use crate::api::list_documents::{
+        request::Request as ListDocuments,
+        response::ResponseWrapper as ListDocumentsResponseWrapper,
+    };
     use crate::zapsign_client::ZapsignProvider;
     use rustify::{errors::ClientError, Client, Endpoint};
 
@@ -46,7 +49,7 @@ mod tests {
 
     #[tokio::test]
     async fn it_works() {
-        let endpoint = Docs::builder().page(1).build().unwrap();
+        let endpoint = ListDocuments::builder().page(1).build().unwrap();
         // client with authentication token
         let mut headers = reqwest::header::HeaderMap::new();
         headers.insert(reqwest::header::AUTHORIZATION, API_TOKEN.parse().unwrap());
@@ -63,7 +66,7 @@ mod tests {
 
         let result = endpoint.exec(&client).await; // Sends GET request to http://api.com/test/path
         match result {
-            Ok(r) => match r.wrap::<PaginationWrapper<_>>() {
+            Ok(r) => match r.wrap::<ListDocumentsResponseWrapper<_>>() {
                 Ok(d) => {
                     d.results.iter().for_each(|d| println!("{:#?}", d));
                 }
