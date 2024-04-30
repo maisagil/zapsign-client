@@ -9,18 +9,16 @@ use rustify::{clients::reqwest::Client as HTTPClient, MiddleWare};
 
 use crate::api::create_document::{self, request::RequestBuilder, response::Response};
 
-const BASE_URL: &str = std::env!("BASE_URL");
-const API_TOKEN: &str = std::env!("API_TOKEN");
 pub struct ZapsignProvider {
     client: rustify::Client,
     auth_key: String,
 }
 
 impl ZapsignProvider {
-    pub fn new(auth_key: &str) -> Self {
+    pub fn new(auth_key: &str, base_url: &str) -> Self {
         let http = reqwest::Client::new();
         Self {
-            client: rustify::Client::new(BASE_URL, http),
+            client: rustify::Client::new(base_url, http),
             auth_key: auth_key.to_string(),
         }
     }
