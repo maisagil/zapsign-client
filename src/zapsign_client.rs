@@ -10,8 +10,6 @@ use rustify::{errors::ClientError, MiddleWare};
 
 use crate::api::create_document::{request::RequestBuilder, response::Response};
 
-const BASE_URL: &str = std::env!("BASE_URL");
-const API_TOKEN: &str = std::env!("API_TOKEN");
 pub struct ZapsignProvider {
     client: rustify::Client,
     auth_key: String,
@@ -28,10 +26,10 @@ pub enum ProviderError {
 }
 
 impl ZapsignProvider {
-    pub fn new(auth_key: &str) -> Self {
+    pub fn new(auth_key: &str, base_url: &str) -> Self {
         let http = reqwest::Client::new();
         Self {
-            client: rustify::Client::new(BASE_URL, http),
+            client: rustify::Client::new(base_url, http),
             auth_key: auth_key.to_string(),
         }
     }
@@ -72,9 +70,8 @@ impl MiddleWare for ZapsignMiddleware {
         _: &E,
         req: &mut http::request::Request<Vec<u8>>,
     ) -> Result<(), rustify::errors::ClientError> {
-        let auth_as_header = HeaderValue::from_str(&format!("{} {}", "Bearer", self.auth));
-        req.headers_mut()
-            .append(AUTHORIZATION, auth_as_header.unwrap());
+        let auth_as_header: HeaderValue = format!("{} {}", "Bearer", self.auth).parse().unwrap();
+        req.headers_mut().append(AUTHORIZATION, auth_as_header);
 
         let ctype_as_header = HeaderValue::from_str("application/json");
 

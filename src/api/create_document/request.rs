@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 #[serde(rename_all = "camelCase")]
 #[builder(setter(into), default)]
 #[endpoint(
-    path = "docs/",
+    path = "docs",
     method = "POST",
     builder = "true",
     response = "Response"
