@@ -1,8 +1,5 @@
 mod api;
-mod endpoints;
 mod zapsign_client;
-
-pub use endpoints::*;
 
 #[cfg(test)]
 mod tests {
