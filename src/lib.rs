@@ -2,6 +2,7 @@ mod api;
 mod zapsign_client;
 
 pub use api::*;
+pub use zapsign_client::*;
 
 #[cfg(test)]
 mod tests {
@@ -10,8 +11,10 @@ mod tests {
         Mock, MockServer, ResponseTemplate,
     };
 
-    use super::api::create_document::request::{Request, Signer, SignerBuilder};
-    use crate::zapsign_client::ZapsignProvider;
+    use super::{
+        api::create_document::request::{Request, Signer, SignerBuilder},
+        *,
+    };
 
     const API_TOKEN: &str = "API_TOKEN";
     #[tokio::test]
