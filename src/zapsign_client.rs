@@ -17,11 +17,11 @@ pub struct ZapsignProvider {
 
 #[derive(Error, Debug)]
 pub enum ProviderError {
-    #[error("Reqwest error")]
+    #[error(transparent)]
     Reqwest(#[from] reqwest::Error),
-    #[error("Parsing error")]
+    #[error(transparent)]
     Parse(#[from] ParseIntError),
-    #[error("Client error")]
+    #[error(transparent)]
     Client(#[from] ClientError),
 }
 
@@ -46,7 +46,7 @@ impl ZapsignProvider {
             .exec(&self.client)
             .await?;
 
-        let result: crate::zapsign_client::Response = endpoint_result.parse()?;
+        let result: Response = endpoint_result.parse()?;
 
         Ok(result)
     }
