@@ -10,7 +10,7 @@ use rustify::{errors::ClientError, MiddleWare};
 
 use crate::api::create_document::{request::RequestBuilder, response::Response};
 
-pub struct ZapsignProvider {
+pub struct Provider {
     client: rustify::Client,
     auth_key: String,
 }
@@ -25,7 +25,7 @@ pub enum ProviderError {
     Client(#[from] ClientError),
 }
 
-impl ZapsignProvider {
+impl Provider {
     pub fn new(auth_key: &str, base_url: &str) -> Self {
         let http = reqwest::Client::new();
         Self {
@@ -39,7 +39,7 @@ impl ZapsignProvider {
         doc_builder: &mut RequestBuilder,
     ) -> Result<Response, ProviderError> {
         let endpoint = doc_builder.build().unwrap();
-        let auth_middleware = ZapsignMiddleware::new("v1".to_string(), self.auth_key.to_string());
+        let auth_middleware = Middleware::new("v1".to_string(), self.auth_key.to_string());
 
         let endpoint_result = endpoint
             .with_middleware(&auth_middleware)
@@ -53,18 +53,18 @@ impl ZapsignProvider {
 }
 
 #[derive(Debug, Clone)]
-pub struct ZapsignMiddleware {
+pub struct Middleware {
     pub version: String,
     pub auth: String,
 }
 
-impl ZapsignMiddleware {
+impl Middleware {
     pub fn new(version: String, auth: String) -> Self {
         Self { version, auth }
     }
 }
 
-impl MiddleWare for ZapsignMiddleware {
+impl MiddleWare for Middleware {
     fn request<E: rustify::Endpoint>(
         &self,
         _: &E,
@@ -73,15 +73,10 @@ impl MiddleWare for ZapsignMiddleware {
         let auth_as_header: HeaderValue = format!("{} {}", "Bearer", self.auth).parse().unwrap();
         req.headers_mut().append(AUTHORIZATION, auth_as_header);
 
-        let ctype_as_header = HeaderValue::from_str("application/json");
+        let ctype_as_header =
+            HeaderValue::from_str("application/json").expect("content-type should be valid.");
 
-        req.headers_mut()
-            .append(CONTENT_TYPE, ctype_as_header.unwrap());
-
-        let url = url::Url::parse(req.uri().to_string().as_str()).unwrap();
-        let url_c = url.clone();
-
-        dbg!(url_c.as_str());
+        req.headers_mut().append(CONTENT_TYPE, ctype_as_header);
 
         Ok(())
     }

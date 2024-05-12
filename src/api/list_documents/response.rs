@@ -5,20 +5,14 @@ use serde_derive::{Deserialize, Serialize};
 pub type Response = Vec<Document>;
 
 #[derive(Default, Debug, Clone, PartialEq, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
 pub struct Document {
-    #[serde(rename = "open_id")]
     pub open_id: i64,
     pub token: String,
     pub status: String,
     pub name: String,
-    #[serde(rename = "original_file")]
     pub original_file: String,
-    #[serde(rename = "signed_file")]
     pub signed_file: Option<String>,
-    #[serde(rename = "created_at")]
     pub created_at: String,
-    #[serde(rename = "last_update_at")]
     pub last_update_at: String,
 }
 

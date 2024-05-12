@@ -7,7 +7,7 @@ pub use zapsign_client::*;
 #[cfg(test)]
 mod tests {
     use wiremock::{
-        matchers::{method, path},
+        matchers::{header, method, path},
         Mock, MockServer, ResponseTemplate,
     };
 
@@ -18,7 +18,7 @@ mod tests {
 
     const API_TOKEN: &str = "API_TOKEN";
     #[tokio::test]
-    async fn teste() {
+    async fn create_document_works() {
         let mock_server = MockServer::start().await;
         let mock_response = serde_json::json!(
         {
@@ -61,11 +61,12 @@ mod tests {
                 );
         Mock::given(method("POST"))
             .and(path("/docs/"))
+            .and(header("Content-Type", "application/json"))
             .respond_with(ResponseTemplate::new(200).set_body_json(mock_response))
             // Mounting the mock on the mock server - it's now effective!
             .mount(&mock_server)
             .await;
-        let provider = ZapsignProvider::new(API_TOKEN, &mock_server.uri());
+        let provider = Provider::new(API_TOKEN, &mock_server.uri());
 
         let mut req_builder = Request::builder();
 
