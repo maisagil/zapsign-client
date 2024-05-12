@@ -60,7 +60,7 @@ mod tests {
 
                 );
         Mock::given(method("POST"))
-            .and(path("/docs"))
+            .and(path("/docs/"))
             .respond_with(ResponseTemplate::new(200).set_body_json(mock_response))
             // Mounting the mock on the mock server - it's now effective!
             .mount(&mock_server)

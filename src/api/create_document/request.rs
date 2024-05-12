@@ -8,7 +8,8 @@ use serde::{Deserialize, Serialize};
 #[serde(rename_all = "camelCase")]
 #[builder(setter(into), default)]
 #[endpoint(
-    path = "docs",
+    // zapsign requires the / at the end.
+    path = "docs/",
     method = "POST",
     builder = "true",
     response = "Response"
